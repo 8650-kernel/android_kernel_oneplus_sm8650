@@ -39,6 +39,27 @@ static struct poweroff_reason pon_reasons[] = {
 	{ "dm-verity enforcing",	0x05, 0x1 },
 	{ "keys clear",			0x06, 0x1 },
 	{ "shipmode",			0x20, 0x2 },
+#ifdef OPLUS_OEM_BOOT_MODE
+	{ "silence",			0x21, 0x1 },//PON_RESTART_REASON_SILENCE= 0x21,
+	{ "sau",			0x22, 0x1 },//PON_RESTART_REASON_SAU= 0x22,
+	{ "rf", 				0x23, 0x1 },//PON_RESTART_REASON_RF= 0x23,
+	{ "wlan",			0x24, 0x1 },//PON_RESTART_REASON_WLAN= 0x24,
+#ifdef USE_MOS_MODE
+	{ "mos",			0x25, 0x1 },//PON_RESTART_REASON_MOS= 0x25,
+#endif
+	{ "ftm",			0x26, 0x1 },//PON_RESTART_REASON_FACTORY= 0x26,
+	{ "kernel", 		0x27, 0x1 },//PON_RESTART_REASON_KERNEL= 0x27,
+	{ "modem",			0x28, 0x1 },//PON_RESTART_REASON_MODEM= 0x28,
+	{ "android",			0x29, 0x1 },//PON_RESTART_REASON_ANDROID= 0x29,
+	{ "safe",			0x2A, 0x1 },//PON_RESTART_REASON_SAFE= 0x2A,
+	//#ifdef OPLUS_FEATURE_AGINGTEST
+	{ "sbllowmemtest",		0x2B, 0x1 },///PON_RESTART_REASON_SBL_DDRTEST= 0x2B,
+	{ "sblmemtest", 		0x2C, 0x1 },///PON_RESTART_REASON_SBL_DDR_CUS= 0x2C,
+	{ "usermemaging",		0x2D, 0x1 },///PON_RESTART_REASON_MEM_AGING= 0x2D,
+	/*0x2E is SBLTEST FAIL, just happen in ddrtest fail when xbl setup*/
+	//#endif/*OPLUS_FEATURE_AGINGTEST*/
+	{ "other",			0x3E, 0x1 },//PON_RESTART_REASON_NORMAL= 0x3E,
+#endif /*OPLUS_OEM_BOOT_MODE*/
 	{}
 };
 
