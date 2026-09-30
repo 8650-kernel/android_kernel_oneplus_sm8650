@@ -680,7 +680,16 @@ static int check_for_req_inflight(struct rsc_drv *drv, struct tcs_group *tcs,
 		for_each_set_bit(j, &curr_enabled, tcs->ncpt) {
 			addr = read_tcs_cmd(drv, drv->regs[RSC_DRV_CMD_ADDR], i, j);
 			for (k = 0; k < msg->num_cmds; k++) {
-				if (cmd_db_match_resource_addr(msg->cmds[k].addr, addr))
+			/*
+			 * Each RPMh VREG accelerator resource has 3 or 4 contiguous 4-byte
+			 * aligned addresses associated with it. Ignore the offset to check
+			 * for in-flight VREG requests.
+			 */
+				accl = ACCL_TYPE(msg->cmds[k].addr);
+				if (accl == HW_ACCL_VREG &&
+				    VREG_ADDR(addr) == VREG_ADDR(msg->cmds[k].addr))
+					return -EBUSY;
+				else if (addr == msg->cmds[k].addr)
 					return -EBUSY;
 			}
 		}
@@ -791,7 +800,7 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg, int c
 
 	/* Controller is busy in 'solver' mode */
 	if (drv->in_solver_mode) {
-		spin_unlock_irqrestore(&drv->lock, flags);
+		spin_unlock_irq(&drv->lock);
 		return -EBUSY;
 	}
 
@@ -817,8 +826,6 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg, int c
 	else
 		enable_tcs_irq(drv, tcs_id, false);
 
-	spin_unlock_irq(&drv->lock);
-
 	/*
 	 * These two can be done after the lock is released because:
 	 * - We marked "tcs_in_use" under lock.
@@ -835,7 +842,7 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg, int c
 	if (!msg->wait_for_compl)
 		clear_bit(tcs_id, drv->tcs_in_use);
 
-	spin_unlock_irqrestore(&drv->lock, flags);
+	spin_unlock_irq(&drv->lock);
 
 	if (!msg->wait_for_compl)
 		wake_up(&drv->tcs_wait);
