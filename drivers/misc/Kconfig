@@ -531,4 +531,7 @@ source "drivers/misc/habanalabs/Kconfig"
 source "drivers/misc/uacce/Kconfig"
 source "drivers/misc/pvpanic/Kconfig"
 source "drivers/misc/mchp_pci1xxxx/Kconfig"
+source "drivers/misc/vibrator/aw8697_haptic/Kconfig"
+source "drivers/misc/vibrator/si_haptic/Kconfig"
+source "drivers/misc/vibrator/oplus_haptic/Kconfig"
 endmenu
