@@ -140,6 +140,7 @@ struct adsp_data {
 	int crash_reason_smem;
 	const char *firmware_name;
 	const char *dtb_firmware_name;
+	const char *load_state;
 	int pas_id;
 	int dtb_pas_id;
 	bool free_after_auth_reset;
@@ -2900,65 +2901,11 @@ static const struct adsp_data slpi_resource_init = {
 		.ssctl_id = 0x16,
 };
 
-static const struct adsp_data sm8150_slpi_resource = {
-		.crash_reason_smem = 424,
-		.firmware_name = "slpi.mdt",
-		.pas_id = 12,
-		.has_aggre2_clk = false,
-		.auto_boot = true,
-		.active_pd_names = (char*[]){
-			"load_state",
-			NULL
-		},
-		.proxy_pd_names = (char*[]){
-			"lcx",
-			"lmx",
-			NULL
-		},
-		.ssr_name = "dsps",
-		.sysmon_name = "slpi",
-		.ssctl_id = 0x16,
-};
 
-static const struct adsp_data sm8250_slpi_resource = {
-	.crash_reason_smem = 424,
-	.firmware_name = "slpi.mdt",
-	.pas_id = 12,
-	.has_aggre2_clk = false,
-	.auto_boot = true,
-	.active_pd_names = (char*[]){
-		"load_state",
-		NULL
-	},
-	.proxy_pd_names = (char*[]){
-		"lcx",
-		"lmx",
-		NULL
-	},
-	.ssr_name = "dsps",
-	.sysmon_name = "slpi",
-	.ssctl_id = 0x16,
-};
 
-static const struct adsp_data sm8350_slpi_resource = {
-	.crash_reason_smem = 424,
-	.firmware_name = "slpi.mdt",
-	.pas_id = 12,
-	.has_aggre2_clk = false,
-	.auto_boot = true,
-	.active_pd_names = (char*[]){
-		"load_state",
-		NULL
-	},
-	.proxy_pd_names = (char*[]){
-		"lcx",
-		"lmx",
-		NULL
-	},
-	.ssr_name = "dsps",
-	.sysmon_name = "slpi",
-	.ssctl_id = 0x16,
-};
+
+
+
 
 static const struct adsp_data waipio_slpi_resource = {
 	.crash_reason_smem = 424,

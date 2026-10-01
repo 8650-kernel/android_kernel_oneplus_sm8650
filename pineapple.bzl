@@ -295,7 +295,6 @@ def define_pineapple():
         "drivers/virt/gunyah/gunyah_loader.ko",
         "drivers/virt/gunyah/gunyah_qcom.ko",
         "kernel/msm_sysstats.ko",
-        "kernel/sched/walt/sched-penalty.ko",
         "kernel/sched/walt/sched-walt.ko",
         "kernel/trace/qcom_ipc_logging.ko",
         "lib/crc-itu-t.ko",
@@ -324,7 +323,6 @@ def define_pineapple():
         "drivers/base/kernelFwUpdate/oplus_bsp_fw_update.ko",
         "drivers/base/touchpanel_notify/oplus_bsp_tp_notify.ko",
         "drivers/soc/oplus/mdmrst/oplus_mdmrst.ko",
-        "drivers/misc/oplus_power_notifier/oplus_power_notifier.ko",
         "drivers/nfc/thn31/tms_device_modules.ko",
         "drivers/nfc/oplus_nfc/oplus_nfc.ko"
     ]
