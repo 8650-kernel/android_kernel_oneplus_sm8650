@@ -57,6 +57,11 @@
 #include "autogroup.h"
 
 #include <trace/hooks/sched.h>
+#include <trace/hooks/dtask.h>
+
+#if IS_ENABLED(CONFIG_OPLUS_SCHED_TUNE)
+#include <../kernel/oplus_cpu/sched/sched_tune/tune.h>
+#endif
 
 EXPORT_TRACEPOINT_SYMBOL_GPL(sched_stat_runtime);
 
@@ -3329,6 +3334,8 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
 
 	update_load_set(&se->load, weight);
 
+	trace_android_vh_reweight_entity(se);
+
 #ifdef CONFIG_SMP
 	do {
 		u32 divider = get_pelt_divider(&se->avg);
@@ -4964,6 +4971,11 @@ check_preempt_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr)
 	if (skip_preempt)
 		return;
 	if (delta_exec > ideal_runtime) {
+		trace_android_vh_resched_curr_lazy(rq_of(cfs_rq), &skip_preempt);
+
+		if(skip_preempt)
+			return;
+
 		resched_curr(rq_of(cfs_rq));
 		/*
 		 * The current task ran long enough, ensure it doesn't get
@@ -5122,6 +5134,7 @@ static void put_prev_entity(struct cfs_rq *cfs_rq, struct sched_entity *prev)
 static void
 entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 {
+	bool skip_preempt = false;
 	/*
 	 * Update run-time statistics of the 'current'.
 	 */
@@ -5139,6 +5152,11 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 	 * validating it and just reschedule.
 	 */
 	if (queued) {
+		trace_android_vh_resched_curr_lazy(rq_of(cfs_rq), &skip_preempt);
+
+		if(skip_preempt)
+			return;
+
 		resched_curr(rq_of(cfs_rq));
 		return;
 	}
@@ -6166,6 +6184,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 */
 	util_est_enqueue(&rq->cfs, p);
 
+#if IS_ENABLED(CONFIG_OPLUS_SCHED_TUNE)
+	schedtune_enqueue_task(p, cpu_of(rq));
+#endif
+
 	/*
 	 * If in_iowait is set, the code below may not trigger any cpufreq
 	 * utilization updates, so do it here explicitly with the IOWAIT flag
@@ -6256,6 +6278,10 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	bool was_sched_idle = sched_idle_rq(rq);
 
 	util_est_dequeue(&rq->cfs, p);
+
+#if IS_ENABLED(CONFIG_OPLUS_SCHED_TUNE)
+	schedtune_dequeue_task(p, cpu_of(rq));
+#endif
 
 	for_each_sched_entity(se) {
 		cfs_rq = cfs_rq_of(se);
@@ -7839,6 +7865,11 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
 	return;
 
 preempt:
+	trace_android_vh_resched_curr_lazy(rq_of(cfs_rq), &ignore);
+
+	if(ignore)
+		return;
+
 	resched_curr(rq);
 	/*
 	 * Only set the backward buddy when the current task is still

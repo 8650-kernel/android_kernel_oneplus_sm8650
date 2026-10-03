@@ -266,7 +266,7 @@ int clk_zonda_evo_pll_configure(struct clk_alpha_pll *pll,
 				struct regmap *regmap,
 				const struct alpha_pll_config *config);
 
-void clk_lucid_5lpe_pll_configure(struct clk_alpha_pll *pll,
+int clk_lucid_5lpe_pll_configure(struct clk_alpha_pll *pll,
 				struct regmap *regmap,
 				const struct alpha_pll_config *config);
 

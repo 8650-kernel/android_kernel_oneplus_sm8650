@@ -54,4 +54,14 @@ obj-y += oplus/boot/
 obj-$(CONFIG_OPLUS_FEATURE_RECORD_MDMRST)     += oplus/mdmrst/
 #endif /*OPLUS_FEATURE_MODEM_MINIDUMP*/
 
+obj-$(CONFIG_OPLUS_FEATURE_QCOM_WATCHDOG) += oplus/boot/qcom_watchdog/
 obj-y += oplus/dft/
+
+#ifdef OPLUS_UFS_DRIVER
+obj-y     += oplus/storage/
+obj-$(CONFIG_OPLUS_UFS_DRIVER) += oplus/storage/common/file_record/
+#endif
+
+#ifdef OPLUS_SUBSYS_SLEEP_MONITOR
+obj-$(CONFIG_OPLUS_SUBSYS_SLEEP_MONITOR)     += oplus/power/subsys_sleep_monitor/
+#endif /* OPLUS_SUBSYS_SLEEP_MONITOR */

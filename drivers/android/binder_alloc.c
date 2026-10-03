@@ -449,7 +449,8 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
 	bool should_fail = false;
 	size_t buffer_size;
 
-        trace_android_vh_binder_detect_low_async_space(is_async, &alloc->free_async_space,
+	trace_android_vh_binder_alloc_new_buf_locked(size, &alloc->free_async_space, is_async);
+	trace_android_vh_binder_detect_low_async_space(is_async, &alloc->free_async_space,
 			current->tgid, &should_fail);
 	if (should_fail) {
 		binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
@@ -459,8 +460,7 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
 		goto out;
 	}
 
-	if (is_async &&
-	    alloc->free_async_space < size + sizeof(struct binder_buffer)) {
+	if (is_async && alloc->free_async_space < size) {
 		binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
 			     "%d: binder_alloc_buf size %zd failed, no async space left\n",
 			      alloc->pid, size);
@@ -850,9 +850,9 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
 
 	alloc->buffer = (void __user *)vma->vm_start;
 
-	alloc->pages = kcalloc(alloc->buffer_size / PAGE_SIZE,
-			       sizeof(alloc->pages[0]),
-			       GFP_KERNEL);
+	alloc->pages = kvcalloc(alloc->buffer_size / PAGE_SIZE,
+				sizeof(alloc->pages[0]),
+				GFP_KERNEL);
 	if (alloc->pages == NULL) {
 		ret = -ENOMEM;
 		failure_string = "alloc page array";
@@ -883,7 +883,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
 	return 0;
 
 err_alloc_buf_struct_failed:
-	kfree(alloc->pages);
+	kvfree(alloc->pages);
 	alloc->pages = NULL;
 err_alloc_pages_failed:
 	alloc->buffer = 0;
@@ -957,7 +957,7 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
 		}
 	}
 	binder_alloc_unlock(alloc);
-	kfree(alloc->pages);
+	kvfree(alloc->pages);
 	if (alloc->mm)
 		mmdrop(alloc->mm);
 

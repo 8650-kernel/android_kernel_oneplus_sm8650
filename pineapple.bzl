@@ -180,6 +180,7 @@ def define_pineapple():
         "drivers/soc/qcom/dcvs/dynpf_scmi.ko",
         "drivers/soc/qcom/dcvs/memlat.ko",
         "drivers/soc/qcom/dcvs/mpam.ko",
+        "drivers/soc/qcom/dcvs/mpam_game.ko",
         "drivers/soc/qcom/dcvs/qcom-dcvs.ko",
         "drivers/soc/qcom/dcvs/qcom-pmu-lib.ko",
         "drivers/soc/qcom/dcvs/qcom_scmi_client.ko",
@@ -295,6 +296,7 @@ def define_pineapple():
         "drivers/virt/gunyah/gunyah_loader.ko",
         "drivers/virt/gunyah/gunyah_qcom.ko",
         "kernel/msm_sysstats.ko",
+        "kernel/sched/walt/sched-penalty.ko",
         "kernel/sched/walt/sched-walt.ko",
         "kernel/trace/qcom_ipc_logging.ko",
         "lib/crc-itu-t.ko",
@@ -317,16 +319,49 @@ def define_pineapple():
         "drivers/soc/oplus/boot/oplus_projectinfo/oplus_bsp_boot_projectinfo.ko",
         "drivers/soc/oplus/boot/bootmode/boot_mode.ko",
         "drivers/soc/oplus/boot/bootloader_log/bootloader_log.ko",
+        "drivers/soc/oplus/boot/htb/tango32.ko",
         "drivers/soc/oplus/device_info/device_info.ko",
         "drivers/soc/oplus/dft/common/olc/olc.ko",
         "drivers/soc/oplus/dft/common/feedback/kernel_fb.ko",
         "drivers/base/kernelFwUpdate/oplus_bsp_fw_update.ko",
         "drivers/base/touchpanel_notify/oplus_bsp_tp_notify.ko",
+        "kernel/oplus_cpu/cpufreq_health/oplus_bsp_cpufreq_health.ko",
+        "drivers/soc/oplus/boot/qcom_watchdog/qcom_enhance_watchdog.ko",
+        "kernel/oplus_cpu/sched/sched_assist/oplus_bsp_sched_assist.ko",
+        "kernel/oplus_cpu/sched/qos_sched/oplus_bsp_qos_sched.ko",
+        "kernel/oplus_cpu/sched/eas_opt/oplus_bsp_eas_opt.ko",
+        "kernel/oplus_cpu/sched/frame_boost/oplus_bsp_frame_boost.ko",
+        "kernel/oplus_cpu/sched/task_cpustats/oplus_bsp_task_cpustats.ko",
+        "kernel/oplus_cpu/sched/task_sched/oplus_bsp_task_sched.ko",
+        "kernel/oplus_cpu/sched/sched_info/oplus_bsp_schedinfo.ko",
+        "kernel/oplus_cpu/uad/cpufreq_uag.ko",
+        "kernel/oplus_cpu/uad/ua_cpu_ioctl.ko",
+        "kernel/oplus_cpu/waker_identify/oplus_bsp_waker_identify.ko",
+        "kernel/oplus_cpu/oplus_omrg/oplus_bsp_omrg.ko",
+        "kernel/oplus_cpu/cpufreq_bouncing/cpufreq_bouncing.ko",
+        "kernel/oplus_cpu/oplus_overload/oplus_bsp_task_overload.ko",
         "drivers/soc/oplus/mdmrst/oplus_mdmrst.ko",
+        "mm/mm_osvelte/oplus_bsp_mm_osvelte.ko",
+        "drivers/soc/oplus/storage/common/storage_log/oplus_storage_log.ko",
+        "drivers/soc/oplus/storage/common/oplus_uprobe/oplus_uprobe.ko",
+        "drivers/soc/oplus/storage/common/file_record/oplus_file_record.ko",
+        "drivers/soc/oplus/power/subsys_sleep_monitor/oplus_subsys_sleep_monitor.ko",
         "drivers/misc/oplus_power_notifier/oplus_power_notifier.ko",
         "drivers/nfc/thn31/tms_device_modules.ko",
         "drivers/nfc/oplus_nfc/oplus_nfc.ko"
     ]
+
+    # Updated for kernel modules that are dynamically loaded based on environment variables
+    # 为根据环境变量而动态加载的内核模块而更新
+    _bsp_drv_inject_in_tree_modules = [
+        # keep sorted
+        "drivers/power/oplus/debug-kit/debug-kit.ko",
+    ]
+
+    features = _get_oplus_features()
+    key = 'OPLUS_FEATURE_BSP_DRV_INJECT_TEST'
+    if features.get(key, '0').upper() in ['1', 'TRUE']:
+        _pineapple_in_tree_modules += _bsp_drv_inject_in_tree_modules
 
     _pineapple_consolidate_in_tree_modules = _pineapple_in_tree_modules + [
         # keep sorted

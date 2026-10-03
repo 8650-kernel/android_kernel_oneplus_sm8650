@@ -2070,10 +2070,6 @@ static const struct rproc_hexagon_res msm8974_mss = {
 			.supply = "cx",
 			.uA = 100000,
 		},
-		{
-			.supply = "pll",
-			.uA = 100000,
-		},
 		{}
 	},
 	.active_supply = (struct qcom_mss_reg_res[]) {
