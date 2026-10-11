@@ -305,7 +305,6 @@ class BazelBuilder:
           logging.info('The target_build_variant = %s', self.target_build_variant)
 
         self.user_opts.extend([
-            "--config=stamp",
             "--user_kmi_symbol_lists=//msm-kernel:android/abi_gki_aarch64_qcom",
             "--ignore_missing_projects",
         ])
