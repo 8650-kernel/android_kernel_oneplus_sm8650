@@ -903,15 +903,6 @@ filegroup(
     ]),
     visibility = ["//visibility:private"],
 )
-# oplus modules depend on ack need directory add here
-linux_includes_oplus = [
-    "include/linux",
-    "include/trace",
-    "kernel",
-    "fs/proc",
-    "mm",
-    ".",
-]
 
 # Implementation details for DDK headers. The targets below cannot be directly
 # depended on by DDK modules.
@@ -923,7 +914,6 @@ ddk_headers(
     hdrs = [
         ":all_headers_allowlist_aarch64_globs",
         ":all_headers_allowlist_common_globs",
-        ":all_headers_allowlist_common_globs_oplus",
     ],
     # The list of include directories where source files can #include headers
     # from. In other words, these are the `-I` option to the C compiler.
@@ -933,8 +923,15 @@ ddk_headers(
         "arch/arm64/include/uapi",
         "include",
         "include/uapi",
-    ] + linux_includes_oplus,
+    ],
     visibility = ["//visibility:private"],
+)
+
+ddk_headers(
+    name = "all_headers_oplus",
+    hdrs = [":all_headers_allowlist_common_globs_oplus"],
+    linux_includes = ["."],
+    visibility = ["//visibility:public"],
 )
 
 ddk_headers(
