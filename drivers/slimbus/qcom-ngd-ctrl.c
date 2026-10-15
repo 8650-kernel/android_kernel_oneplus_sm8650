@@ -1831,7 +1831,7 @@ static void qcom_slim_ngd_up_worker(struct work_struct *work)
 
 	/* Make sure qmi service is up before continuing */
 	if (!wait_for_completion_interruptible_timeout(&ctrl->qmi_up,
-                msecs_to_jiffies(MSEC_PER_SEC))) {
+						       msecs_to_jiffies(MSEC_PER_SEC))) {
 		dev_err(ctrl->dev, "QMI wait timeout\n");
 		return;
 	}

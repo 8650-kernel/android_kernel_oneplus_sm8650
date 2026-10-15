@@ -270,7 +270,6 @@ static void mhi_del_ring_element(struct mhi_controller *mhi_cntrl,
 	/* smp update */
 	smp_wmb();
 }
-
 int mhi_destroy_device(struct device *dev, void *data)
 {
 	struct mhi_chan *ul_chan, *dl_chan;
@@ -1219,8 +1218,6 @@ static int mhi_queue(struct mhi_device *mhi_dev, struct mhi_buf_info *buf_info,
 	if (unlikely(ret))
 		return ret;
 
-	read_lock_irqsave(&mhi_cntrl->pm_lock, flags);
-
 	/* Let controller mark last busy for runtime PM framework if needed */
 	if (mhi_cntrl->runtime_last_busy)
 		mhi_cntrl->runtime_last_busy(mhi_cntrl);
@@ -1239,9 +1236,6 @@ static int mhi_queue(struct mhi_device *mhi_dev, struct mhi_buf_info *buf_info,
 
 	if (likely(MHI_DB_ACCESS_VALID(mhi_cntrl)))
 		mhi_ring_chan_db(mhi_cntrl, mhi_chan);
-
-	if (dir == DMA_FROM_DEVICE)
-		mhi_cntrl->runtime_put(mhi_cntrl);
 
 	read_unlock_irqrestore(&mhi_cntrl->pm_lock, flags);
 
@@ -1303,9 +1297,6 @@ int mhi_gen_tre(struct mhi_controller *mhi_cntrl, struct mhi_chan *mhi_chan,
 		goto out;
 	}
 
-	/* Protect accesses for reading and incrementing WP */
-	write_lock_bh(&mhi_chan->lock);
-
 	buf_ring = &mhi_chan->buf_ring;
 	tre_ring = &mhi_chan->tre_ring;
 
@@ -1323,10 +1314,8 @@ int mhi_gen_tre(struct mhi_controller *mhi_cntrl, struct mhi_chan *mhi_chan,
 
 	if (!info->pre_mapped) {
 		ret = mhi_cntrl->map_single(mhi_cntrl, buf_info);
-		if (ret) {
-			write_unlock_bh(&mhi_chan->lock);
-			return ret;
-		}
+		if (ret)
+			goto out;
 	}
 
 	eob = !!(flags & MHI_EOB);
