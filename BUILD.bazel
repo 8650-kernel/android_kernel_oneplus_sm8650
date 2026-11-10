@@ -905,9 +905,6 @@ filegroup(
 )
 # oplus modules depend on ack need directory add here
 linux_includes_oplus = [
-    "include/linux",
-    "include/trace",
-    "kernel",
     "fs/proc",
     "mm",
     ".",
